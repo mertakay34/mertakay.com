@@ -9,124 +9,83 @@
 <meta property="og:description" content="Seçilmiş işler">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mertakay.com">
+<meta name="theme-color" content="#000000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root { --ink:#1d1d1f; --muted:#86868b; --line:#e5e5e7; --bg:#fff; --soft:#f5f5f7;
-          --ease:cubic-bezier(.22,.61,.36,1); }
+  :root { --bg:#000; --ink:#ededed; --muted:#7a7a7a; --line:#1f1f1f; --ease:cubic-bezier(.22,.61,.36,1); }
   * { box-sizing:border-box; margin:0; padding:0; }
-  html { background:var(--bg); }
-  body { color:var(--ink); font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,sans-serif;
-         -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  html { background:var(--bg); scroll-behavior:smooth; }
+  body { color:var(--ink); font-family:'Inter',-apple-system,system-ui,sans-serif; font-weight:300; -webkit-font-smoothing:antialiased; }
   a { color:inherit; text-decoration:none; }
   img { display:block; }
 
-  /* ---------- üst menü ---------- */
-  header { position:fixed; inset:0 0 auto; z-index:40; height:52px; display:flex; align-items:center; justify-content:space-between;
-           padding:0 max(22px,4vw); transition:background .5s var(--ease), border-color .5s var(--ease); border-bottom:1px solid transparent; }
-  header.solid { background:rgba(255,255,255,.72); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); border-color:rgba(0,0,0,.06); }
-  .logo { font-weight:600; font-size:17px; letter-spacing:-.01em; }
-  nav a { font-size:13px; color:var(--ink); opacity:.8; margin-left:26px; transition:opacity .2s; }
-  nav a:hover { opacity:1; }
+  header { position:fixed; inset:0 0 auto; z-index:20; display:flex; justify-content:space-between; align-items:center;
+           padding:26px 5vw; transition:background .4s var(--ease); }
+  header.solid { background:rgba(0,0,0,.85); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+  .logo { font-size:14px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; }
+  nav a { font-size:13px; color:var(--muted); margin-left:28px; transition:color .2s; }
+  nav a:hover { color:var(--ink); }
 
-  /* ---------- açılış: kaydırdıkça büyüyen video ---------- */
-  .hero { height:260vh; position:relative; }
-  .hero .stage { position:sticky; top:0; height:100vh; overflow:hidden; display:flex; align-items:center; justify-content:center; }
-  .hero-text { position:absolute; top:0; left:0; right:0; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-               text-align:center; pointer-events:none; will-change:transform,opacity; padding-bottom:22vh; }
-  .eyebrow { font-size:clamp(17px,1.6vw,24px); font-weight:600; color:var(--muted); margin-bottom:10px; }
-  h1 { font-size:clamp(64px,13vw,200px); font-weight:700; letter-spacing:-.045em; line-height:.92; }
-  h1 .ch { display:inline-block; opacity:0; transform:translateY(.35em); filter:blur(8px);
-           animation:rise 1.1s var(--ease) forwards; }
-  .eyebrow, .scroll-hint span { opacity:0; display:inline-block; animation:fade 1.2s var(--ease) .9s forwards; }
-  @keyframes rise { to { opacity:1; transform:none; filter:blur(0); } }
+  /* açılış */
+  .hero { position:relative; height:100vh; overflow:hidden; cursor:pointer; background:#0b0b0b; }
+  .hero img { width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 1.6s var(--ease); }
+  .hero img.loaded { opacity:.75; }
+  .hero-text { position:absolute; left:5vw; bottom:9vh; }
+  .hero-text h1 { font-size:clamp(34px,5vw,64px); font-weight:400; letter-spacing:-.02em; line-height:1.05; }
+  .hero-text p { margin-top:10px; font-size:15px; color:#bdbdbd; }
+  .hero-text .watch { display:inline-block; margin-top:22px; font-size:13px; letter-spacing:.12em; text-transform:uppercase;
+                      border-bottom:1px solid rgba(255,255,255,.4); padding-bottom:4px; }
+  .fade-in { opacity:0; animation:fade 1.4s var(--ease) .3s forwards; }
   @keyframes fade { to { opacity:1; } }
-  .scroll-hint { position:absolute; bottom:5vh; left:50%; transform:translateX(-50%); font-size:12px; color:var(--muted); letter-spacing:.04em; }
-  .scroll-hint { text-align:center; }
-  .scroll-hint::after { content:''; display:block; width:1px; height:34px; margin:10px auto 0; background:linear-gradient(var(--muted),transparent);
-                        animation:drip 2s var(--ease) infinite; transform-origin:top; }
-  @keyframes drip { 0%{transform:scaleY(0)} 50%{transform:scaleY(1)} 100%{transform:scaleY(1);opacity:0} }
 
-  .hero-media { position:relative; width:100vw; height:100vh; overflow:hidden; background:var(--soft);
-                will-change:transform,border-radius; cursor:pointer; transform-origin:center; }
-  .hero-media img { width:100%; height:100%; object-fit:cover; will-change:transform; }
-  .hero-cap { position:absolute; left:0; right:0; bottom:0; padding:5vh 4vw; display:flex; justify-content:space-between; align-items:flex-end;
-              color:#fff; background:linear-gradient(transparent,rgba(0,0,0,.45)); opacity:0; transition:opacity .6s var(--ease); }
-  .hero-cap.on { opacity:1; }
-  .hero-cap .t { font-size:clamp(22px,3vw,40px); font-weight:600; letter-spacing:-.02em; }
-  .hero-cap .i { font-size:14px; opacity:.85; }
+  /* işler */
+  .works { padding:14vh 5vw 6vh; }
+  .works h2, .about h2 { font-size:13px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:6vh; }
+  .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:7vh 3vw; }
+  .work { cursor:pointer; }
+  .thumb { position:relative; aspect-ratio:16/9; overflow:hidden; background:#111; }
+  .thumb img { width:100%; height:100%; object-fit:cover; opacity:.9; transition:opacity .5s var(--ease), transform 1.2s var(--ease); }
+  .work:hover .thumb img { opacity:1; transform:scale(1.02); }
+  .meta { display:flex; justify-content:space-between; gap:16px; padding-top:14px; }
+  .meta .t { font-size:15px; font-weight:400; }
+  .meta .i { font-size:13px; color:var(--muted); white-space:nowrap; }
 
-  /* ---------- oynat butonu ---------- */
-  .play { position:absolute; inset:0; margin:auto; width:78px; height:78px; border-radius:50%;
-          background:rgba(255,255,255,.75); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-          display:grid; place-items:center; opacity:0; transform:scale(.85); transition:opacity .4s var(--ease), transform .4s var(--ease); }
-  .play svg { width:26px; margin-left:4px; }
-  .hero-media:hover .play, .media:hover .play { opacity:1; transform:none; }
+  /* hakkında / iletişim */
+  .about { border-top:1px solid var(--line); margin:8vh 5vw 0; padding:12vh 0; display:grid; grid-template-columns:1fr 2fr; gap:5vw; }
+  .about h2 { margin-bottom:0; }
+  .about p { font-size:clamp(18px,1.8vw,23px); line-height:1.6; color:#cfcfcf; max-width:36em; }
+  .contact { margin-top:5vh; font-size:15px; line-height:2.1; }
+  .contact a { border-bottom:1px solid #333; transition:border-color .2s; }
+  .contact a:hover { border-color:var(--ink); }
+  .contact .sep { color:#444; margin:0 10px; }
 
-  /* ---------- bölüm başlığı ---------- */
-  .section-head { max-width:1200px; margin:0 auto; padding:18vh 6vw 8vh; }
-  .section-head h2 { font-size:clamp(44px,7vw,96px); font-weight:700; letter-spacing:-.04em; line-height:1; }
-  .section-head p { font-size:clamp(19px,1.8vw,26px); color:var(--muted); font-weight:500; margin-top:18px; max-width:28em; line-height:1.35; }
+  footer { padding:26px 5vw; font-size:12px; color:#555; display:flex; justify-content:space-between; }
 
-  /* ---------- projeler ---------- */
-  .projects { max-width:1400px; margin:0 auto; padding:0 4vw 10vh; }
-  .project { margin-bottom:18vh; }
-  .media { position:relative; aspect-ratio:16/9; border-radius:28px; overflow:hidden; background:var(--soft); cursor:pointer;
-           will-change:transform,opacity; -webkit-mask-image:-webkit-radial-gradient(white,black); }
-  .media img { width:100%; height:118%; object-fit:cover; will-change:transform; }
-  .p-meta { display:flex; justify-content:space-between; align-items:baseline; gap:24px; padding:28px 6px 0; will-change:transform,opacity; }
-  .p-meta .t { font-size:clamp(26px,3.2vw,44px); font-weight:600; letter-spacing:-.03em; }
-  .p-meta .i { font-size:clamp(14px,1.2vw,17px); color:var(--muted); font-weight:500; white-space:nowrap; }
-
-  /* ---------- hakkında: kaydırdıkça aydınlanan metin ---------- */
-  .about { height:240vh; background:var(--soft); position:relative; }
-  .about .stage { position:sticky; top:0; height:100vh; display:flex; align-items:center; justify-content:center; padding:0 7vw; }
-  .about-inner { max-width:1100px; }
-  .about .label { font-size:15px; font-weight:600; color:var(--muted); margin-bottom:28px; }
-  .about .big { font-size:clamp(30px,4.4vw,64px); font-weight:600; letter-spacing:-.03em; line-height:1.12; }
-  .about .big .w { opacity:.12; transition:opacity .25s linear; }
-  .about .big .w.lit { opacity:1; }
-
-  /* ---------- iletişim ---------- */
-  .contact { text-align:center; padding:22vh 6vw 18vh; }
-  .contact h2 { font-size:clamp(44px,8vw,112px); font-weight:700; letter-spacing:-.045em; line-height:1; }
-  .contact .mail { display:inline-block; margin-top:34px; font-size:clamp(19px,2vw,28px); font-weight:500; color:#0066cc; }
-  .contact .mail:hover { text-decoration:underline; }
-  .links { margin-top:22px; font-size:17px; color:var(--muted); }
-  .links a { margin:0 12px; transition:color .2s; }
-  .links a:hover { color:var(--ink); }
-
-  footer { border-top:1px solid var(--line); margin:0 4vw; padding:22px 0 30px; font-size:12px; color:var(--muted); display:flex; justify-content:space-between; }
-
-  /* ---------- görünüme girince ---------- */
-  .reveal { opacity:0; transform:translateY(40px); transition:opacity 1.1s var(--ease), transform 1.1s var(--ease); }
+  /* görünüme girince */
+  .reveal { opacity:0; transform:translateY(24px); transition:opacity 1s var(--ease), transform 1s var(--ease); }
   .reveal.in { opacity:1; transform:none; }
 
-  /* ---------- oynatıcı ---------- */
-  #player { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:4vw;
-            background:rgba(255,255,255,.82); backdrop-filter:blur(30px) saturate(160%); -webkit-backdrop-filter:blur(30px) saturate(160%);
-            opacity:0; visibility:hidden; transition:opacity .5s var(--ease), visibility 0s .5s; }
-  #player.open { opacity:1; visibility:visible; transition:opacity .5s var(--ease); }
-  #player .frame { width:min(1400px,100%,(100vh - 8vw) * 1.7778); aspect-ratio:16/9; background:#000; border-radius:18px; overflow:hidden;
-                   box-shadow:0 30px 80px rgba(0,0,0,.18); transform:scale(.92) translateY(20px); transition:transform .6s var(--ease); }
-  #player.open .frame { transform:none; }
+  /* oynatıcı */
+  #player { position:fixed; inset:0; z-index:50; background:rgba(0,0,0,.96); display:flex; align-items:center; justify-content:center; padding:5vw;
+            opacity:0; visibility:hidden; transition:opacity .4s var(--ease), visibility 0s .4s; }
+  #player.open { opacity:1; visibility:visible; transition:opacity .4s var(--ease); }
+  #player .frame { width:min(1400px,100%,(100vh - 10vw) * 1.7778); aspect-ratio:16/9; background:#000; }
   #player iframe { width:100%; height:100%; border:0; display:block; }
-  #close { position:absolute; top:22px; right:22px; width:40px; height:40px; border-radius:50%; border:0; cursor:pointer;
-           background:rgba(0,0,0,.06); color:var(--ink); font-size:18px; transition:background .2s; }
-  #close:hover { background:rgba(0,0,0,.12); }
+  #close { position:absolute; top:24px; right:5vw; background:none; border:0; color:var(--ink); font:inherit; font-size:13px;
+           letter-spacing:.14em; text-transform:uppercase; cursor:pointer; opacity:.7; }
+  #close:hover { opacity:1; }
 
   @media (max-width:760px) {
+    header { padding:20px 6vw; }
     nav a { margin-left:18px; }
-    .media { border-radius:16px; }
-    .p-meta { flex-direction:column; gap:6px; padding-top:18px; }
-    .project { margin-bottom:12vh; }
-    .hero { height:200vh; }
+    .grid { grid-template-columns:1fr; gap:6vh; }
+    .about { grid-template-columns:1fr; gap:4vh; }
   }
   @media (prefers-reduced-motion:reduce) {
     *, *::before, *::after { animation:none !important; transition:none !important; }
-    h1 .ch, .eyebrow, .scroll-hint span, .reveal { opacity:1; transform:none; filter:none; }
-    .about .big .w { opacity:1; }
+    .fade-in, .reveal { opacity:1; transform:none; }
   }
 </style>
 </head>
@@ -134,53 +93,38 @@
 
 <header id="hdr">
   <a href="#" class="logo">Mert Akay</a>
-  <nav><a href="#isler">İşler</a><a href="#hakkinda">Hakkında</a><a href="#iletisim">İletişim</a></nav>
+  <nav><a href="#isler">İşler</a><a href="#hakkinda">Hakkında</a></nav>
 </header>
 
-<section class="hero" id="hero">
-  <div class="stage">
-    <div class="hero-text" id="heroText">
-      <div class="eyebrow">Yönetmen</div>
-      <h1 id="h1">Mert Akay</h1>
-    </div>
-    <div class="hero-media" id="heroMedia" role="button" tabindex="0">
-      <img id="heroImg" alt="">
-      <span class="play"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#1d1d1f"/></svg></span>
-      <div class="hero-cap" id="heroCap"><span class="t"></span><span class="i"></span></div>
-    </div>
-    <div class="scroll-hint" id="hint"><span>Kaydırın</span></div>
+<section class="hero" id="hero" role="button" tabindex="0">
+  <img id="heroImg" alt="">
+  <div class="hero-text fade-in">
+    <h1>Mert Akay</h1>
+    <p>Yönetmen</p>
+    <span class="watch" id="heroWatch">İzle</span>
   </div>
 </section>
 
-<div class="section-head" id="isler">
-  <h2 class="reveal">Seçilmiş işler.</h2>
-  <p class="reveal">Reklam, müzik videosu ve kısa film.</p>
-</div>
-
-<section class="projects" id="projects"></section>
+<section class="works" id="isler">
+  <h2 class="reveal">Seçilmiş İşler</h2>
+  <div class="grid" id="grid"></div>
+</section>
 
 <section class="about" id="hakkinda">
-  <div class="stage">
-    <div class="about-inner">
-      <div class="label">Hakkında</div>
-      <p class="big" id="aboutText">Mert Akay, İstanbul merkezli bir yönetmen. Her karede bir duygu, her kurguda bir ritim arıyor. Reklam, müzik videosu ve kısa film alanında markalar ve sanatçılarla hikâyeler anlatıyor.</p>
+  <h2 class="reveal">Hakkında</h2>
+  <div class="reveal">
+    <p>Mert Akay, İstanbul merkezli bir yönetmen. Reklam, müzik videosu ve kısa film alanında markalar ve sanatçılarla çalışıyor.</p>
+    <div class="contact">
+      <a href="mailto:info@mertakay.com">info@mertakay.com</a><br>
+      <a href="https://vimeo.com/" target="_blank" rel="noopener">Vimeo</a><span class="sep">/</span><a href="https://instagram.com/" target="_blank" rel="noopener">Instagram</a>
     </div>
-  </div>
-</section>
-
-<section class="contact" id="iletisim">
-  <h2 class="reveal">Birlikte çalışalım.</h2>
-  <a class="mail reveal" href="mailto:iletisim@mertakay.com">iletisim@mertakay.com</a>
-  <div class="links reveal">
-    <a href="https://vimeo.com/" target="_blank" rel="noopener">Vimeo</a>
-    <a href="https://instagram.com/" target="_blank" rel="noopener">Instagram</a>
   </div>
 </section>
 
 <footer><span>© <span id="yil"></span> Mert Akay</span><span>mertakay.com</span></footer>
 
 <div id="player" role="dialog" aria-modal="true" aria-label="Video oynatıcı">
-  <button id="close" aria-label="Kapat">✕</button>
+  <button id="close" aria-label="Kapat">Kapat ✕</button>
   <div class="frame"><iframe id="pf" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
 </div>
 
@@ -190,7 +134,7 @@
    vimeo: Vimeo linkindeki numara (vimeo.com/123456789 → "123456789")
    Gizli ("unlisted") videolarda ikinci parçayı da ekleyin:
    vimeo.com/123456789/abcdef1234 → "123456789/abcdef1234"
-   İlk video açılışta büyüyen ana video olur.
+   İlk video açılışta tam ekran gösterilir.
    ==================================================================== */
 const VIDEOS = [
   { vimeo: "76979871", title: "Proje Adı 1", info: "Marka · 2026" },
@@ -198,124 +142,69 @@ const VIDEOS = [
   { vimeo: "1084537",  title: "Proje Adı 3", info: "Kısa Film · 2025" },
 ];
 
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-const ease = t => 1 - Math.pow(1 - t, 3);
-
-/* Vimeo kapak görselleri */
 function thumb(v, img) {
   fetch('https://vimeo.com/api/oembed.json?width=1920&url=' + encodeURIComponent('https://vimeo.com/' + v.vimeo))
-    .then(r => r.json()).then(d => { if (d.thumbnail_url) img.src = d.thumbnail_url.replace(/_\d+x\d+/, '_1920'); })
-    .catch(() => {});
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (!d.thumbnail_url) return;
+      img.onload = function () { img.classList.add('loaded'); };
+      img.src = d.thumbnail_url.replace(/_\d+x\d+/, '_1920');
+    })
+    .catch(function () {});
 }
 
-/* Başlık harfleri tek tek yükselsin */
-const h1 = document.getElementById('h1');
-h1.innerHTML = [...h1.textContent].map((c, i) =>
-  c === ' ' ? ' ' : '<span class="ch" style="animation-delay:' + (.15 + i * .055) + 's">' + c + '</span>').join('');
-
-/* Açılış videosu */
-const [first, ...rest] = VIDEOS;
-const heroMedia = document.getElementById('heroMedia'), heroImg = document.getElementById('heroImg');
-const heroCap = document.getElementById('heroCap');
+/* açılış videosu */
+var first = VIDEOS[0];
+var hero = document.getElementById('hero');
 if (first) {
-  thumb(first, heroImg);
-  heroCap.querySelector('.t').textContent = first.title;
-  heroCap.querySelector('.i').textContent = first.info || '';
-  heroMedia.setAttribute('aria-label', first.title + ' izle');
-  heroMedia.onclick = () => openPlayer(first.vimeo);
-  heroMedia.onkeydown = e => { if (e.key === 'Enter') openPlayer(first.vimeo); };
+  thumb(first, document.getElementById('heroImg'));
+  document.getElementById('heroWatch').textContent = 'İzle — ' + first.title;
+  hero.onclick = function () { openPlayer(first.vimeo); };
+  hero.onkeydown = function (e) { if (e.key === 'Enter') openPlayer(first.vimeo); };
 }
 
-/* Diğer projeler */
-const projects = document.getElementById('projects');
-const items = rest.map(v => {
-  const el = document.createElement('article');
-  el.className = 'project';
-  el.innerHTML = '<div class="media" role="button" tabindex="0"><img alt="" loading="lazy">' +
-    '<span class="play"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z" fill="#1d1d1f"/></svg></span></div>' +
-    '<div class="p-meta"><span class="t"></span><span class="i"></span></div>';
+/* işler */
+var grid = document.getElementById('grid');
+VIDEOS.forEach(function (v) {
+  var el = document.createElement('article');
+  el.className = 'work reveal';
+  el.tabIndex = 0;
+  el.innerHTML = '<div class="thumb"><img alt="" loading="lazy"></div><div class="meta"><span class="t"></span><span class="i"></span></div>';
   el.querySelector('.t').textContent = v.title;
   el.querySelector('.i').textContent = v.info || '';
-  const media = el.querySelector('.media'), img = el.querySelector('img');
-  media.setAttribute('aria-label', v.title + ' izle');
-  media.onclick = () => openPlayer(v.vimeo);
-  media.onkeydown = e => { if (e.key === 'Enter') openPlayer(v.vimeo); };
-  thumb(v, img);
-  projects.appendChild(el);
-  return { el, media, img, meta: el.querySelector('.p-meta') };
+  el.setAttribute('aria-label', v.title + ' izle');
+  thumb(v, el.querySelector('img'));
+  el.onclick = function () { openPlayer(v.vimeo); };
+  el.onkeydown = function (e) { if (e.key === 'Enter') openPlayer(v.vimeo); };
+  grid.appendChild(el);
 });
 
-/* Hakkında metnini kelimelere böl */
-const about = document.getElementById('aboutText');
-about.innerHTML = about.textContent.trim().split(/\s+/).map(w => '<span class="w">' + w + '</span>').join(' ');
-const words = [...about.querySelectorAll('.w')];
+/* görünüme girince yumuşakça belirme */
+var io = new IntersectionObserver(function (es) {
+  es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: .15 });
+document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
 
-/* Görünüme girince beliren öğeler */
-const io = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-}), { threshold: .2 });
-document.querySelectorAll('.reveal').forEach((el, i) => { el.style.transitionDelay = (i % 3) * .12 + 's'; io.observe(el); });
+/* menü arka planı */
+var hdr = document.getElementById('hdr');
+function onScroll() { hdr.classList.toggle('solid', scrollY > window.innerHeight * .8); }
+addEventListener('scroll', onScroll, { passive: true });
+onScroll();
 
-/* Kaydırmaya bağlı animasyonlar */
-const hdr = document.getElementById('hdr'), hero = document.getElementById('hero');
-const heroText = document.getElementById('heroText'), hint = document.getElementById('hint');
-const aboutSec = document.getElementById('hakkinda');
-const stickyProgress = el => { const r = el.getBoundingClientRect(); return clamp(-r.top / (r.height - innerHeight)); };
-
-function frame() {
-  const vh = innerHeight;
-  hdr.classList.toggle('solid', scrollY > 30);
-
-  if (!reduce) {
-    /* açılış: yazı geri çekilir, video tam ekrana büyür */
-    const p = stickyProgress(hero), e = ease(clamp(p / .8));
-    heroText.style.opacity = 1 - clamp(p * 2.6);
-    heroText.style.transform = 'translateY(' + (-p * 140) + 'px) scale(' + (1 - p * .15) + ')';
-    hint.style.opacity = 1 - clamp(p * 6);
-    const s = .42 + .58 * e;
-    heroMedia.style.transform = 'translateY(' + ((1 - e) * 30) + 'vh) scale(' + s + ')';
-    heroMedia.style.borderRadius = ((1 - e) * 60) + 'px';
-    heroImg.style.transform = 'scale(' + (1.25 - .25 * e) + ')';
-    heroCap.classList.toggle('on', p > .78);
-
-    /* projeler: aşağıdan büyüyerek gelir, görsel hafif paralaks */
-    items.forEach(({ media, img, meta }) => {
-      const r = media.getBoundingClientRect();
-      const enter = ease(clamp((vh - r.top) / (vh * .75)));
-      media.style.transform = 'scale(' + (.86 + .14 * enter) + ')';
-      media.style.opacity = .2 + .8 * enter;
-      meta.style.opacity = clamp((vh - r.bottom + 80) / 200);
-      meta.style.transform = 'translateY(' + ((1 - clamp((vh - r.bottom + 80) / 200)) * 30) + 'px)';
-      const pr = clamp((vh - r.top) / (vh + r.height));
-      img.style.transform = 'translateY(' + (-pr * 15) + '%)';
-    });
-  }
-
-  /* hakkında: kelimeler sırayla aydınlanır */
-  const ap = clamp(stickyProgress(aboutSec) * 1.25);
-  const n = Math.round(ap * words.length);
-  words.forEach((w, i) => w.classList.toggle('lit', reduce || i < n));
-}
-let ticking = false;
-addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { frame(); ticking = false; }); } }, { passive: true });
-addEventListener('resize', frame);
-frame();
-
-/* Oynatıcı */
-const player = document.getElementById('player'), pf = document.getElementById('pf');
+/* oynatıcı */
+var player = document.getElementById('player'), pf = document.getElementById('pf');
 function openPlayer(vimeo) {
-  const [id, hash] = vimeo.split('/');
-  pf.src = 'https://player.vimeo.com/video/' + id + '?autoplay=1&title=0&byline=0&portrait=0&dnt=1' + (hash ? '&h=' + hash : '');
+  var parts = vimeo.split('/');
+  pf.src = 'https://player.vimeo.com/video/' + parts[0] + '?autoplay=1&title=0&byline=0&portrait=0&dnt=1' + (parts[1] ? '&h=' + parts[1] : '');
   player.classList.add('open'); document.body.style.overflow = 'hidden';
 }
 function closePlayer() {
   player.classList.remove('open'); document.body.style.overflow = '';
-  setTimeout(() => { if (!player.classList.contains('open')) pf.src = ''; }, 500);
+  setTimeout(function () { if (!player.classList.contains('open')) pf.src = ''; }, 400);
 }
 document.getElementById('close').onclick = closePlayer;
-player.addEventListener('click', e => { if (e.target === player) closePlayer(); });
-addEventListener('keydown', e => { if (e.key === 'Escape') closePlayer(); });
+player.addEventListener('click', function (e) { if (e.target === player) closePlayer(); });
+addEventListener('keydown', function (e) { if (e.key === 'Escape') closePlayer(); });
 document.getElementById('yil').textContent = new Date().getFullYear();
 </script>
 </body>

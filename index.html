@@ -66,9 +66,6 @@
   .knock .mask { background:#000; color:#fff; mix-blend-mode:multiply; }
   .wordline { z-index:31; color:var(--accent); -webkit-text-stroke:1.5px var(--accent); pointer-events:none; transition:color .4s var(--ease); }
   .wordline.outline { color:transparent; }
-  .flash { position:absolute; left:50%; top:50%; width:10px; height:10px; margin:-5px 0 0 -5px; border-radius:50%; background:var(--accent); z-index:35; opacity:0; pointer-events:none; }
-  .flash.go { animation:flash .7s cubic-bezier(.16,1,.3,1); }
-  @keyframes flash { 0% { opacity:.9; transform:scale(1); } 100% { opacity:0; transform:scale(120); } }
   :root { --tw:15vw; }
   @media (max-width:767px) { :root { --tw:34vw; } .hero { height:220vh; } }
 
@@ -150,7 +147,7 @@
 </header>
 
 <main>
-  <section class="hero" id="hero"><div class="stage" id="stage"><div class="knock" id="knock"><div class="mask">Mert Akay</div></div><div class="wordline" aria-hidden="true">Mert Akay</div><div class="flash"></div><h1 class="sr" style="position:absolute;left:-9999px">Mert Akay</h1></div></section>
+  <section class="hero" id="hero"><div class="stage" id="stage"><div class="knock" id="knock"><div class="mask">Mert Akay</div></div><div class="wordline" aria-hidden="true">Mert Akay</div><h1 class="sr" style="position:absolute;left:-9999px">Mert Akay</h1></div></section>
   <div class="filters"><span data-i18n="projects">Projects</span></div>
   <div class="grid" id="grid"></div>
   <div class="langs" id="langs" aria-label="Language"></div>
@@ -385,7 +382,7 @@ VIDEOS.slice(0, HERO_SPOTS.length).forEach(function (v, i) {
 });
 function pos(x, y, sc, rot) { return 'translate(-50%,-50%) translate(' + x + 'vw,' + y + 'vh) rotate(' + rot + 'deg) scale(' + sc + ')'; }
 /* harflerin içindeki video */
-var knockEl = document.getElementById('knock'), wordline = document.querySelector('.wordline'), flashEl = document.querySelector('.flash');
+var knockEl = document.getElementById('knock'), wordline = document.querySelector('.wordline');
 var knock = { v: VIDEOS[0], media: knockEl, frame: null };
 function startKnock() {
   if (knock.frame || !knock.v || !knock.v.vimeo) return;
@@ -423,7 +420,7 @@ function heroScroll() {
   var m = clamp01((p - .45) / .12);
   knockEl.style.opacity = m;
   var nowMerged = m > .5;
-  if (nowMerged !== merged) { merged = nowMerged; wordline.classList.toggle('outline', merged); if (merged) { flashEl.classList.remove('go'); void flashEl.offsetWidth; flashEl.classList.add('go'); } }
+  if (nowMerged !== merged) { merged = nowMerged; wordline.classList.toggle('outline', merged); }
   /* 3) en sonda yazı yukarı kayıp kaybolur */
   var o = clamp01((p - .8) / .2);
   var tf = 'translateY(' + (-o * 20) + 'vh)';

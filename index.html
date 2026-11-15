@@ -26,9 +26,8 @@
   button { font:inherit; color:inherit; background:none; border:0; cursor:pointer; text-transform:inherit; }
 
   /* açılış ekranı */
-  #loader { position:fixed; inset:0; z-index:200; background:#000; display:flex; align-items:center; justify-content:center;
-            transition:opacity .8s var(--ease), transform .8s var(--ease); }
-  #loader.done { opacity:0; transform:scale(1.25); pointer-events:none; }
+  #loader { position:fixed; inset:0; z-index:200; background:#000; display:flex; align-items:center; justify-content:center; }
+  #loader.done { display:none; }
   @keyframes blink { 50% { opacity:.25; } }
   #loader { flex-direction:column; gap:18px; }
   #loader .dyn { image-rendering:pixelated; overflow:visible; }
@@ -48,7 +47,7 @@
 
   /* üst menü */
   header { position:fixed; top:24px; left:0; width:100%; z-index:100; user-select:none;
-           opacity:0; transition:opacity .8s var(--ease) .3s; }
+           opacity:0; }
   body.ready header { opacity:1; }
   header nav { display:flex; justify-content:space-between; padding:0 16px; }
   header nav a { text-shadow:0 0 8px rgba(0,0,0,.7); }

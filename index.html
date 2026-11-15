@@ -10,6 +10,10 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mertakay.com">
 <meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://player.vimeo.com">
+<link rel="preconnect" href="https://i.vimeocdn.com">
+<link rel="preconnect" href="https://f.vimeocdn.com">
+<link rel="preconnect" href="https://vod-adaptive-ak.vimeocdn.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
@@ -52,6 +56,8 @@
   .item:hover .media video.ready { opacity:1; }
   .media img { transition:opacity .49s, filter .49s; }
   .item:hover .media img.vimeo { filter:brightness(1.12); }
+  .media iframe { position:absolute; top:50%; left:50%; width:100%; height:100%; transform:translate(-50%,-50%); border:0; pointer-events:none; opacity:0; transition:opacity .6s var(--ease); }
+  .media iframe.on { opacity:1; }
   .item.big { grid-column:span 2; grid-row:span 2; }
   .item.big .media { padding-bottom:0; height:calc(100% - var(--fs) * 1.3 - 10px); min-height:30vw; }
 
@@ -130,6 +136,7 @@
   <div class="frame"><iframe id="pf" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><video id="pv" controls playsinline></video></div>
 </div>
 
+<script src="https://player.vimeo.com/api/player.js"></script>
 <script>
 /* ====================================================================
    VİDEOLAR — Vimeo'daki sırayla ızgaraya dizilir, ilki büyük gösterilir.
@@ -195,11 +202,43 @@ function setTitle(el, title) {
     sp.textContent = w; el.appendChild(sp);
   });
 }
-function vimeoThumb(id, img, w) {
+function vimeoThumb(id, img, w, v) {
   fetch('https://vimeo.com/api/oembed.json?width=' + w + '&url=' + encodeURIComponent('https://vimeo.com/' + id))
     .then(function (r) { return r.json(); })
-    .then(function (d) { if (d.thumbnail_url) img.src = d.thumbnail_url.replace(/_\d+(x\d+)?(?=[?.]|$)/, '_' + w); })
+    .then(function (d) {
+      if (d.width && d.height) { v.ratio = d.width / d.height; fitAll(); }
+      if (d.thumbnail_url && !v.thumb) img.src = d.thumbnail_url.replace(/_\d+(x\d+)?(?=[?.]|$)/, '_' + w);
+    })
     .catch(function () {});
+}
+
+/* kutu içi oynatma: video kutuyu tamamen kaplasın (kenarlarda siyah bant olmasın) */
+function fit(it) {
+  var f = it.frame; if (!f) return;
+  var box = it.media, bw = box.clientWidth, bh = box.clientHeight, r = it.v.ratio || 16 / 9;
+  if (bw / bh > r) { f.style.width = bw + 'px'; f.style.height = Math.ceil(bw / r) + 'px'; }
+  else { f.style.height = bh + 'px'; f.style.width = Math.ceil(bh * r) + 'px'; }
+}
+function fitAll() { if (window.items) items.forEach(fit); }
+addEventListener('resize', fitAll);
+
+function startInline(it) {
+  if (it.frame || !it.v.vimeo) return;
+  var parts = it.v.vimeo.split('/');
+  var f = document.createElement('iframe');
+  f.allow = 'autoplay; fullscreen; picture-in-picture';
+  f.setAttribute('tabindex', '-1');
+  f.src = 'https://player.vimeo.com/video/' + parts[0] + '?background=1&autoplay=1&muted=1&loop=1&autopause=0&dnt=1&quality=540p' + (parts[1] ? '&h=' + parts[1] : '');
+  it.media.appendChild(f); it.frame = f; fit(it);
+  try {
+    var pl = new Vimeo.Player(f);
+    pl.on('play', function () { f.classList.add('on'); });
+    pl.on('timeupdate', function () { f.classList.add('on'); });
+  } catch (e) { setTimeout(function () { f.classList.add('on'); }, 1500); }
+}
+function stopInline(it) {
+  if (!it.frame) return;
+  it.frame.remove(); it.frame = null;
 }
 function inFilter(v, f) {
   if (f === 'all') return true;
@@ -227,13 +266,24 @@ var items = VIDEOS.map(function (v, i) {
     a.addEventListener('mouseleave', function () { pv.pause(); });
   } else {
     img.className = 'vimeo';
-    if (v.thumb) img.src = v.thumb; else vimeoThumb(v.vimeo.split('/')[0], img, i === 0 ? 1280 : 640);
+    if (v.thumb) img.src = v.thumb;
+    vimeoThumb(v.vimeo.split('/')[0], img, i === 0 ? 1280 : 640, v);
   }
   a.onclick = function () { openPlayer(v); };
   a.onkeydown = function (e) { if (e.key === 'Enter') openPlayer(v); };
   grid.appendChild(a);
-  return { el: a, v: v };
+  return { el: a, v: v, media: media, frame: null };
 });
+window.items = items;
+
+/* ekrana giren kutular oynar, çıkanlar durur (site hızlı kalsın) */
+var playIO = new IntersectionObserver(function (es) {
+  es.forEach(function (e) {
+    var it = items[+e.target.dataset.i];
+    if (e.isIntersecting) startInline(it); else stopInline(it);
+  });
+}, { rootMargin: '0px' });
+items.forEach(function (it, i) { it.el.dataset.i = i; playIO.observe(it.el); });
 
 /* projeler (hepsi gösterilir) */
 function applyFilter(f) {
@@ -251,6 +301,7 @@ function applyFilter(f) {
   });
 }
 applyFilter('all');
+fitAll();
 
 /* menü */
 var info = document.getElementById('info');
@@ -278,7 +329,7 @@ function openPlayer(v) {
   } else {
     frame.classList.remove('file');
     var parts = v.vimeo.split('/');
-    pf.src = 'https://player.vimeo.com/video/' + parts[0] + '?autoplay=1&title=0&byline=0&portrait=0&dnt=1' + (parts[1] ? '&h=' + parts[1] : '');
+    pf.src = 'https://player.vimeo.com/video/' + parts[0] + '?autoplay=1&title=0&byline=0&portrait=0&badge=0&vimeo_logo=0&share=0&like=0&watch_later=0&collections=0&dnt=1&quality=auto' + (parts[1] ? '&h=' + parts[1] : '');
   }
   player.classList.add('open'); document.body.style.overflow = 'hidden';
 }

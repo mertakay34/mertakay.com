@@ -136,6 +136,7 @@
    Büyük harfte Türkçe kelimeler (ç ğ ı ö ş ü içerenler) İ ile, diğerleri I ile yazılır.
    Türkçe olup bu harfleri içermeyen kelimeleri TR_WORDS listesine ekleyin.
    Vimeo videosu:   { vimeo: "123456789", title: "Marka 'Proje'" }
+   (Gizli Vimeo videolarında kapak otomatik gelmez; thumb: "görsel linki" ekleyin.)
    Kendi dosyanız:  videolar klasörüne isim.mp4 ve isim.jpg yükleyip
                     { file: "videolar/isim", title: "Marka 'Proje'" }
    ==================================================================== */
@@ -153,7 +154,7 @@ const VIDEOS = [
   { vimeo: "1070309906", title: "Beymen Collection 'Mirgün Cabas Weekend 25'" },
   { vimeo: "756076117",  title: "Beymen 'Fall Winter 22'" },
   { vimeo: "756075282",  title: "The Irish Spirit 'Mert Ramazan Demir · Dublin'" },
-  { vimeo: "725630548",  title: "BEGE feat. Yung Ouzo '2T1BB'" },
+  { vimeo: "725630548",  title: "BEGE feat. Yung Ouzo '2T1BB'", thumb: "https://i.vimeocdn.com/video/1471799760-92e09167dc09c82c37a87c01062fe75cba2505e14ac9500f949df701659d6d42-d_640" },
   { vimeo: "698280867",  title: "Coca Cola & Fineapple" },
   { vimeo: "486001371",  title: "D Marin 'Zea'" },
   { vimeo: "486002460",  title: "D Marin 'Göcek'" },
@@ -161,7 +162,7 @@ const VIDEOS = [
   { vimeo: "486006595",  title: "D Marin 'Covid'" },
   { vimeo: "671843896",  title: "İpekyol 'Simple and Sharp'" },
   { vimeo: "670735941",  title: "Robin Schulz & Wes 'Alane'" },
-  { vimeo: "670707413",  title: "Samsung S20 FE 'Team Galaxy'" },
+  { vimeo: "670707413",  title: "Samsung S20 FE 'Team Galaxy'", thumb: "https://i.vimeocdn.com/video/1358684162-da7fcb8a273ff1b83108ac9935b262b628a94ba3f8fa4e889007bd73cca60d70-d_640" },
   { vimeo: "670673099",  title: "Brothers Chivas x Balmain 'Ali Kalyoncu'" },
   { vimeo: "670683047",  title: "Samsung Galaxy Z Fold 3 'Team Galaxy'" },
   { vimeo: "561704708",  title: "Armani Beauty 'Stronger With You · Samet Sırmalı'" },
@@ -224,7 +225,7 @@ var items = VIDEOS.map(function (v, i) {
     a.addEventListener('mouseleave', function () { pv.pause(); });
   } else {
     img.className = 'vimeo';
-    vimeoThumb(v.vimeo.split('/')[0], img, i === 0 ? 1280 : 640);
+    if (v.thumb) img.src = v.thumb; else vimeoThumb(v.vimeo.split('/')[0], img, i === 0 ? 1280 : 640);
   }
   a.onclick = function () { openPlayer(v); };
   a.onkeydown = function (e) { if (e.key === 'Enter') openPlayer(v); };

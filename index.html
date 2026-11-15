@@ -40,7 +40,7 @@
   .filters button:hover, .filters button.active { opacity:1; }
 
   /* ızgara */
-  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px 16px; padding:10vh 16px 0; }
+  .grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px 16px; padding:10vh 16px 0; }
   .item { position:relative; cursor:pointer; opacity:0; transform:translateY(14px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
   .item.visible { opacity:1; transform:none; }
   .item.hidden { display:none; }
@@ -81,7 +81,7 @@
   @media (max-width:767px) {
     :root { --fs:9px; }
     header nav a:first-child { order:3; } header nav a:last-child { order:2; }
-    .grid { grid-template-columns:repeat(2,1fr); gap:16px 8px; padding-top:5vh; }
+    .grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 8px; padding-top:5vh; }
     .item h2 { margin-bottom:4px; }
     .item h2 .num { margin-right:6px; }
     .item.big .media { height:auto; min-height:0; padding-bottom:62.6%; }
@@ -132,18 +132,45 @@
 
 <script>
 /* ====================================================================
-   VİDEOLAR — sırayla ızgaraya dizilir, ilki büyük gösterilir.
-   kategori: "reklam", "muzik", "kisa-film" (birden fazlası virgülle)
-   secili: true → "Seçilmiş İşler"de görünür
-   lang: "en" → İngilizce isimlerde i harfi İ olmasın (ör. Virtualalin)
-   Vimeo videosu:   { vimeo: "123456789", title: "...", kategori: "reklam", secili: true }
+   VİDEOLAR — Vimeo'daki sırayla ızgaraya dizilir, ilki büyük gösterilir.
+   Büyük harfte Türkçe kelimeler (ç ğ ı ö ş ü içerenler) İ ile, diğerleri I ile yazılır.
+   Türkçe olup bu harfleri içermeyen kelimeleri TR_WORDS listesine ekleyin.
+   Vimeo videosu:   { vimeo: "123456789", title: "Marka 'Proje'" }
    Kendi dosyanız:  videolar klasörüne isim.mp4 ve isim.jpg yükleyip
-                    { file: "videolar/isim", title: "...", kategori: "reklam", secili: true }
+                    { file: "videolar/isim", title: "Marka 'Proje'" }
    ==================================================================== */
 const VIDEOS = [
-  { vimeo: "1070333005", title: "Ayakkabı Dünyası 'Özge Özacar'", kategori: "reklam", secili: true },
-  { vimeo: "482504420",  title: "AVVA 'FW21' Murat Boz",          kategori: "reklam", secili: true },
-  { vimeo: "1070313913", title: "ELLE x Ford 'Virtualalin'",      kategori: "reklam", secili: true, lang: "en" },
+  { vimeo: "1210586313", title: "Beymen Club 'Hot Summer'" },
+  { vimeo: "1154604261", title: "SOBER 'Blade on Canvas'" },
+  { vimeo: "1154594886", title: "Land Rover Defender 'Rachel Araz'" },
+  { vimeo: "1154596276", title: "Prima Hava Yolları" },
+  { vimeo: "1070333005", title: "Ayakkabı Dünyası 'Özge Özacar'" },
+  { vimeo: "482504420",  title: "AVVA FW21 'Murat Boz'" },
+  { vimeo: "670675214",  title: "Brothers Chivas x Balmain 'Eda Zamanpur'" },
+  { vimeo: "1070313913", title: "ELLE x Ford 'Virtualalin'" },
+  { vimeo: "852309924",  title: "Ford 'Truck Tattoo'" },
+  { vimeo: "852311120",  title: "Adidas Adiclub 'Beşiktaş Kadın Futbol Takımı'" },
+  { vimeo: "1070309906", title: "Beymen Collection 'Mirgün Cabas Weekend 25'" },
+  { vimeo: "756076117",  title: "Beymen 'Fall Winter 22'" },
+  { vimeo: "756075282",  title: "The Irish Spirit 'Mert Ramazan Demir · Dublin'" },
+  { vimeo: "725630548",  title: "BEGE feat. Yung Ouzo '2T1BB'" },
+  { vimeo: "698280867",  title: "Coca Cola & Fineapple" },
+  { vimeo: "486001371",  title: "D Marin 'Zea'" },
+  { vimeo: "486002460",  title: "D Marin 'Göcek'" },
+  { vimeo: "486003616",  title: "D Marin" },
+  { vimeo: "486006595",  title: "D Marin 'Covid'" },
+  { vimeo: "671843896",  title: "İpekyol 'Simple and Sharp'" },
+  { vimeo: "670735941",  title: "Robin Schulz & Wes 'Alane'" },
+  { vimeo: "670707413",  title: "Samsung S20 FE 'Team Galaxy'" },
+  { vimeo: "670673099",  title: "Brothers Chivas x Balmain 'Ali Kalyoncu'" },
+  { vimeo: "670683047",  title: "Samsung Galaxy Z Fold 3 'Team Galaxy'" },
+  { vimeo: "561704708",  title: "Armani Beauty 'Stronger With You · Samet Sırmalı'" },
+  { vimeo: "483043047",  title: "Hande Erçel x Nocturne" },
+  { vimeo: "487776887",  title: "Berkcan 'Space Jump'" },
+  { vimeo: "362010124",  title: "Cacharel 'Giyinme Sanatı'" },
+  { vimeo: "351358169",  title: "GQ 'Summer 2019'" },
+  { vimeo: "311388642",  title: "GQ x Jaguar" },
+  { vimeo: "288578046",  title: "Vogue Türkiye 'Fenty Beauty · Şeyma Subaşı'" },
 ];
 
 const FILTERS = [
@@ -154,6 +181,17 @@ const FILTERS = [
   { id: "kisa-film", label: "Kısa Film" },
 ];
 
+var TR_WORDS = ['ali', 'demir', 'giyinme'];
+function setTitle(el, title) {
+  el.textContent = '';
+  title.split(/(\s+)/).forEach(function (w) {
+    if (!w.trim()) { el.appendChild(document.createTextNode(w)); return; }
+    var sp = document.createElement('span');
+    var clean = w.replace(/[^\wçğıöşüÇĞİÖŞÜ]/g, '').toLocaleLowerCase('tr');
+    sp.lang = (/[çğıöşüÇĞİÖŞÜ]/.test(w) || TR_WORDS.indexOf(clean) > -1) ? 'tr' : 'en';
+    sp.textContent = w; el.appendChild(sp);
+  });
+}
 function vimeoThumb(id, img) {
   fetch('https://vimeo.com/api/oembed.json?width=1280&url=' + encodeURIComponent('https://vimeo.com/' + id))
     .then(function (r) { return r.json(); })
@@ -172,8 +210,7 @@ var items = VIDEOS.map(function (v, i) {
   var a = document.createElement('article');
   a.className = 'item'; a.tabIndex = 0;
   a.innerHTML = '<h2><span class="num"></span><span class="t"></span></h2><div class="media"><img alt="" loading="lazy"></div>';
-  a.querySelector('.t').textContent = v.title;
-  if (v.lang) a.querySelector('.t').lang = v.lang;
+  setTitle(a.querySelector('.t'), v.title);
   a.setAttribute('aria-label', v.title + ' izle');
   var media = a.querySelector('.media'), img = a.querySelector('img');
   if (v.file) {
@@ -230,7 +267,7 @@ document.querySelectorAll('[data-act]').forEach(function (a) {
 var player = document.getElementById('player'), pf = document.getElementById('pf'), pvid = document.getElementById('pv');
 var frame = player.querySelector('.frame');
 function openPlayer(v) {
-  var pt = document.getElementById('ptitle'); pt.textContent = v.title; pt.lang = v.lang || 'tr';
+  setTitle(document.getElementById('ptitle'), v.title);
   if (v.file) {
     frame.classList.add('file');
     pvid.poster = v.file + '.jpg'; pvid.src = v.file + '.mp4';

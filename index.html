@@ -124,14 +124,8 @@
 
 <section id="info" aria-hidden="true" lang="en">
   <div class="contact">
-    <span data-i18n="contact">Contact</span>
-    <a href="mailto:info@mertakay.com" lang="en">info@mertakay.com</a><br>
-    <a href="https://vimeo.com/" target="_blank" rel="noopener" lang="en">Vimeo</a><br>
+    <a href="https://vimeo.com/akaymert" target="_blank" rel="noopener" lang="en">Vimeo</a><br>
     <a href="https://instagram.com/" target="_blank" rel="noopener" lang="en">Instagram</a>
-  </div>
-  <div class="bio">
-    <p data-i18n="bio1">Mert Akay is a director based in Istanbul.</p>
-    <p data-i18n="bio2">He works with brands and artists across commercials, music videos and short films.</p>
   </div>
 </section>
 
@@ -299,7 +293,6 @@ function applyFilter(f) {
     if (show) {
       n++;
       it.el.querySelector('.num').textContent = String(n).padStart(2, '0');
-      if (n === 1) it.el.classList.add('big');
       setTimeout(function () { it.el.classList.add('visible'); }, 60 * n);
     }
   });

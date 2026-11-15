@@ -358,7 +358,7 @@ function applyFilter(f) {
 applyFilter('all');
 fitAll();
 
-/* açılış: videolar MERT AKAY'ın etrafında durur; kaydırma başlayınca dönerek ortaya toplanır */
+/* açılış: videolar MERT AKAY'ın etrafında durur; kaydırma başlayınca düz şekilde ortaya toplanır */
 var HERO_SPOTS = innerWidth < 768
   ? [[-21, -32], [21, -26], [-22, -15], [22, -12], [-21, 14], [22, 17], [-21, 29], [21, 33]]
   : [[-31, -27], [0, -31], [31, -26], [-36, 1], [36, 3], [-27, 28], [3, 31], [31, 27]];
@@ -411,7 +411,7 @@ function heroScroll() {
   /* 1) kareler ortaya toplanır */
   var g = ease(clamp01(p / .5));
   heroTiles.forEach(function (h) {
-    h.el.style.transform = pos(h.gx * (1 - g), h.gy * (1 - g), 1 - g * .92, h.rot * g);
+    h.el.style.transform = pos(h.gx * (1 - g), h.gy * (1 - g), 1 - g * .92, 0);
     h.el.style.opacity = 1 - clamp01((g - .85) / .15);
     h.el.style.pointerEvents = g > .05 ? 'none' : 'auto';
   });

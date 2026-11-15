@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mert Akay — Yönetmen</title>
-<meta name="description" content="Mert Akay — Yönetmen. Reklam, müzik videosu ve kısa film.">
-<meta property="og:title" content="Mert Akay — Yönetmen">
-<meta property="og:description" content="Reklam, müzik videosu ve kısa film.">
+<title>Mert Akay — Director</title>
+<meta name="description" content="Mert Akay — Director. Commercials, music videos and short films.">
+<meta property="og:title" content="Mert Akay — Director">
+<meta property="og:description" content="Commercials, music videos and short films.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mertakay.com">
 <meta name="theme-color" content="#000000">
@@ -62,7 +62,10 @@
   .item.big .media { padding-bottom:0; height:calc(100% - var(--fs) * 1.3 - 10px); min-height:30vw; }
 
   /* alt bilgi */
-  .foot { display:flex; justify-content:space-between; padding:16vh 16px 24px; opacity:.4; }
+  .langs { display:flex; flex-wrap:wrap; gap:6px 18px; padding:16vh 16px 0; }
+  .langs button { opacity:.4; transition:opacity .3s; }
+  .langs button:hover, .langs button.active { opacity:1; }
+  .foot { display:flex; justify-content:space-between; padding:4vh 16px 24px; opacity:.4; }
   .foot a:hover { opacity:1; }
 
   /* bilgi paneli */
@@ -106,33 +109,34 @@
 
 <header>
   <nav>
-    <a href="#" data-act="archive">Arşiv</a>
+    <a href="#" data-act="archive" data-i18n="archive">Archive</a>
     <a href="#" data-act="home">M.A.</a>
-    <a href="#" data-act="info">Bilgi</a>
+    <a href="#" data-act="info" data-i18n="info">Info</a>
   </nav>
 </header>
 
 <main>
-  <div class="filters"><span>Projeler</span></div>
+  <div class="filters"><span data-i18n="projects">Projects</span></div>
   <div class="grid" id="grid"></div>
-  <div class="foot"><span>© <span id="yil"></span> Mert Akay</span><a href="#" data-act="top">Başa dön</a></div>
+  <div class="langs" id="langs" aria-label="Language"></div>
+  <div class="foot"><span>© <span id="yil"></span> Mert Akay</span><a href="#" data-act="top" data-i18n="top">Back to top</a></div>
 </main>
 
-<section id="info" aria-hidden="true">
+<section id="info" aria-hidden="true" lang="en">
   <div class="contact">
-    <span>İletişim</span>
+    <span data-i18n="contact">Contact</span>
     <a href="mailto:info@mertakay.com" lang="en">info@mertakay.com</a><br>
     <a href="https://vimeo.com/" target="_blank" rel="noopener" lang="en">Vimeo</a><br>
     <a href="https://instagram.com/" target="_blank" rel="noopener" lang="en">Instagram</a>
   </div>
   <div class="bio">
-    <p>Mert Akay, İstanbul merkezli bir yönetmen.</p>
-    <p>Reklam, müzik videosu ve kısa film alanında markalar ve sanatçılarla çalışıyor.</p>
+    <p data-i18n="bio1">Mert Akay is a director based in Istanbul.</p>
+    <p data-i18n="bio2">He works with brands and artists across commercials, music videos and short films.</p>
   </div>
 </section>
 
 <div id="player" role="dialog" aria-modal="true" aria-label="Video oynatıcı">
-  <div class="bar"><span id="ptitle"></span><button id="close">Kapat</button></div>
+  <div class="bar"><span id="ptitle"></span><button id="close" data-i18n="close">Close</button></div>
   <div class="frame"><iframe id="pf" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><video id="pv" controls playsinline></video></div>
 </div>
 
@@ -253,7 +257,7 @@ var items = VIDEOS.map(function (v, i) {
   a.className = 'item'; a.tabIndex = 0;
   a.innerHTML = '<h2><span class="num"></span><span class="t"></span></h2><div class="media"><img alt="" loading="lazy"></div>';
   setTitle(a.querySelector('.t'), v.title);
-  a.setAttribute('aria-label', v.title + ' izle');
+  a.setAttribute('aria-label', v.title);
   var media = a.querySelector('.media'), img = a.querySelector('img');
   if (v.file) {
     img.src = v.file + '.jpg';
@@ -340,6 +344,46 @@ function closePlayer() {
 }
 document.getElementById('close').onclick = closePlayer;
 addEventListener('keydown', function (e) { if (e.key === 'Escape') { closePlayer(); setInfo(false); } });
+
+/* diller — İngilizce ana dil, Türkçe ikinci */
+var LANGS = [
+  ['en', 'English',    ['Archive', 'Info', 'Projects', 'Contact', 'Back to top', 'Close', 'Mert Akay is a director based in Istanbul.', 'He works with brands and artists across commercials, music videos and short films.']],
+  ['tr', 'Türkçe',     ['Arşiv', 'Bilgi', 'Projeler', 'İletişim', 'Başa dön', 'Kapat', 'Mert Akay, İstanbul merkezli bir yönetmen.', 'Reklam, müzik videosu ve kısa film alanında markalar ve sanatçılarla çalışıyor.']],
+  ['de', 'Deutsch',    ['Archiv', 'Info', 'Projekte', 'Kontakt', 'Nach oben', 'Schließen', 'Mert Akay ist ein in Istanbul ansässiger Regisseur.', 'Er arbeitet mit Marken und Künstlern an Werbefilmen, Musikvideos und Kurzfilmen.']],
+  ['fr', 'Français',   ['Archives', 'Infos', 'Projets', 'Contact', 'Haut de page', 'Fermer', 'Mert Akay est un réalisateur basé à Istanbul.', 'Il travaille avec des marques et des artistes sur des publicités, des clips et des courts métrages.']],
+  ['es', 'Español',    ['Archivo', 'Info', 'Proyectos', 'Contacto', 'Volver arriba', 'Cerrar', 'Mert Akay es un director afincado en Estambul.', 'Trabaja con marcas y artistas en publicidad, videoclips y cortometrajes.']],
+  ['it', 'Italiano',   ['Archivio', 'Info', 'Progetti', 'Contatti', 'Torna su', 'Chiudi', 'Mert Akay è un regista con base a Istanbul.', 'Lavora con marchi e artisti tra pubblicità, videoclip e cortometraggi.']],
+  ['pt', 'Português',  ['Arquivo', 'Info', 'Projetos', 'Contato', 'Voltar ao topo', 'Fechar', 'Mert Akay é um diretor baseado em Istambul.', 'Trabalha com marcas e artistas em publicidade, videoclipes e curtas-metragens.']],
+  ['nl', 'Nederlands', ['Archief', 'Info', 'Projecten', 'Contact', 'Naar boven', 'Sluiten', 'Mert Akay is een regisseur uit Istanbul.', 'Hij werkt met merken en artiesten aan commercials, videoclips en korte films.']],
+  ['pl', 'Polski',     ['Archiwum', 'Info', 'Projekty', 'Kontakt', 'Do góry', 'Zamknij', 'Mert Akay jest reżyserem mieszkającym w Stambule.', 'Współpracuje z markami i artystami przy reklamach, teledyskach i filmach krótkometrażowych.']],
+  ['sv', 'Svenska',    ['Arkiv', 'Info', 'Projekt', 'Kontakt', 'Till toppen', 'Stäng', 'Mert Akay är en regissör baserad i Istanbul.', 'Han arbetar med varumärken och artister inom reklam, musikvideor och kortfilm.']],
+  ['ru', 'Русский',    ['Архив', 'Инфо', 'Проекты', 'Контакты', 'Наверх', 'Закрыть', 'Мерт Акай — режиссёр из Стамбула.', 'Работает с брендами и артистами над рекламой, музыкальными клипами и короткометражными фильмами.']],
+  ['ar', 'العربية',    ['الأرشيف', 'معلومات', 'المشاريع', 'تواصل', 'إلى الأعلى', 'إغلاق', 'ميرت أكاي مخرج مقيم في إسطنبول.', 'يعمل مع العلامات التجارية والفنانين في الإعلانات والفيديو كليبات والأفلام القصيرة.']],
+  ['zh', '中文',        ['档案', '信息', '作品', '联系', '返回顶部', '关闭', 'Mert Akay 是一位常驻伊斯坦布尔的导演。', '他与品牌和艺术家合作，创作广告、音乐录影带和短片。']],
+  ['ja', '日本語',      ['アーカイブ', '情報', 'プロジェクト', '連絡先', 'トップへ', '閉じる', 'Mert Akay はイスタンブールを拠点とする映像監督です。', '広告、ミュージックビデオ、短編映画の分野でブランドやアーティストと仕事をしています。']],
+  ['ko', '한국어',      ['아카이브', '정보', '프로젝트', '연락처', '맨 위로', '닫기', 'Mert Akay는 이스탄불을 기반으로 활동하는 감독입니다.', '광고, 뮤직비디오, 단편영화 분야에서 브랜드 및 아티스트와 작업합니다.']]
+];
+var KEYS = ['archive', 'info', 'projects', 'contact', 'top', 'close', 'bio1', 'bio2'];
+var langsEl = document.getElementById('langs');
+function setLang(code) {
+  var L = LANGS.filter(function (l) { return l[0] === code; })[0] || LANGS[0];
+  document.querySelectorAll('[data-i18n]').forEach(function (el) {
+    var k = KEYS.indexOf(el.dataset.i18n); if (k > -1) { el.textContent = L[2][k]; el.lang = L[0]; }
+  });
+  document.getElementById('info').lang = L[0];
+  document.documentElement.lang = L[0];
+  langsEl.querySelectorAll('button').forEach(function (b) { b.classList.toggle('active', b.dataset.l === L[0]); });
+  try { localStorage.setItem('lang', L[0]); } catch (e) {}
+}
+LANGS.forEach(function (l) {
+  var b = document.createElement('button');
+  b.textContent = l[1]; b.lang = l[0]; b.dataset.l = l[0];
+  b.onclick = function () { setLang(l[0]); };
+  langsEl.appendChild(b);
+});
+var saved = 'en';
+try { saved = localStorage.getItem('lang') || 'en'; } catch (e) {}
+setLang(saved);
 
 /* açılış */
 document.getElementById('yil').textContent = new Date().getFullYear();

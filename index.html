@@ -25,26 +25,6 @@
   a { color:inherit; text-decoration:none; }
   button { font:inherit; color:inherit; background:none; border:0; cursor:pointer; text-transform:inherit; }
 
-  /* açılış ekranı */
-  #loader { position:fixed; inset:0; z-index:200; background:#000; display:flex; align-items:center; justify-content:center; }
-  #loader.done { display:none; }
-  @keyframes blink { 50% { opacity:.25; } }
-  #loader { flex-direction:column; gap:18px; }
-  #loader .dyn { image-rendering:pixelated; overflow:visible; }
-  #loader .ld { font-size:11px; letter-spacing:.2em; }
-  #loader .ld i { font-style:normal; animation:blink .5s steps(2) infinite; }
-  .dyn .spark { animation:fuse .8s steps(4) forwards; }
-  .dyn .fl { animation:blink .12s steps(2) infinite; } .dyn .fl2 { animation:blink .12s steps(2) infinite reverse; }
-  .dyn .fz { animation:gone 0s forwards; } .dyn .f0 { animation-delay:.2s; } .dyn .f1 { animation-delay:.4s; } .dyn .f2 { animation-delay:.6s; } .dyn .f3 { animation-delay:.8s; }
-  .dyn .stick { animation:gone 0s .9s forwards; }
-  .dyn .b { opacity:0; }
-  .dyn .b1 { animation:frame .15s steps(1) .9s forwards; }
-  .dyn .b2 { animation:frame .2s steps(1) 1.05s forwards; }
-  .dyn .b3 { animation:frame .35s steps(1) 1.25s forwards; }
-  @keyframes fuse { to { transform:translate(-1px, 4px); } }
-  @keyframes gone { to { opacity:0; } }
-  @keyframes frame { 0% { opacity:1; } 100% { opacity:0; } }
-
   /* üst menü */
   header { position:fixed; top:24px; left:0; width:100%; z-index:100; user-select:none;
            opacity:0; }
@@ -52,24 +32,12 @@
   header nav { display:flex; justify-content:space-between; padding:0 16px; }
   header nav a { text-shadow:0 0 8px rgba(0,0,0,.7); }
 
-  /* açılış: videolar etrafta durur, kaydırınca MERT AKAY'ın ortasına toplanır, harflerin içi videoyla dolar */
-  .hero { position:relative; height:260vh; }
-  .hero .stage { position:sticky; top:0; height:100vh; overflow:hidden; }
-  .tile { position:absolute; left:50%; top:50%; width:var(--tw); aspect-ratio:16/9; overflow:hidden; background:#111; z-index:20; cursor:pointer;
-          opacity:0; will-change:transform,opacity; transition:transform .9s cubic-bezier(.16,1,.3,1), opacity .6s var(--ease); }
-  .tile img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-  .knock { position:absolute; inset:0; z-index:30; isolation:isolate; overflow:hidden; opacity:0; pointer-events:none; }
-  .knock iframe { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); border:0; pointer-events:none; }
-  .knock .mask, .wordline { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; white-space:nowrap;
-           font-family:'Archivo Black',var(--mono); font-size:clamp(26px,4.2vw,76px); line-height:1; letter-spacing:-.01em; text-transform:uppercase; }
-  .knock .mask { background:#000; color:#fff; mix-blend-mode:multiply; }
-  .wordline { z-index:31; color:var(--accent); -webkit-text-stroke:1.5px var(--accent); pointer-events:none; transition:color .4s var(--ease); }
-  .wordline.outline { color:transparent; }
-  :root { --tw:15vw; }
-  @media (max-width:767px) { :root { --tw:34vw; } .hero { height:220vh; } }
+  /* açılış: sade, ortada MERT AKAY */
+  .hero { height:100vh; height:100svh; display:flex; align-items:center; justify-content:center; }
+  .wordmark { font-family:'Archivo Black',var(--mono); font-weight:400; font-size:clamp(20px,2.6vw,46px); line-height:1; letter-spacing:-.01em; text-transform:uppercase; }
 
   /* filtreler */
-  .filters { padding:4vh 16px 0; display:flex; flex-direction:column; align-items:flex-start; gap:2px; line-height:1.5; }
+  .filters { padding:calc(24px + 3.2em) 16px 0; display:flex; flex-direction:column; align-items:flex-start; gap:2px; line-height:1.5; }
   .filters button { opacity:.4; transition:opacity .3s; text-align:left; }
   .filters button:hover, .filters button.active { opacity:1; }
 
@@ -135,7 +103,6 @@
 </head>
 <body>
 
-<div id="loader"><svg class="dyn" id="dyn" viewBox="0 0 16 16" width="72" height="72" shape-rendering="crispEdges" aria-hidden="true"><g class="stick"></g><g class="b b1"></g><g class="b b2"></g><g class="b b3"></g></svg><div class="ld">LOADING<i>...</i></div></div>
 
 <header>
   <nav>
@@ -146,7 +113,7 @@
 </header>
 
 <main>
-  <section class="hero" id="hero"><div class="stage" id="stage"><div class="knock" id="knock"><div class="mask">Mert Akay</div></div><div class="wordline" aria-hidden="true">Mert Akay</div><h1 class="sr" style="position:absolute;left:-9999px">Mert Akay</h1></div></section>
+  <section class="hero" id="hero"><h1 class="wordmark">Mert Akay</h1></section>
   <div class="filters"><span data-i18n="projects">Projects</span></div>
   <div class="grid" id="grid"></div>
   <div class="langs" id="langs" aria-label="Language"></div>
@@ -165,33 +132,6 @@
   <div class="frame"><iframe id="pf" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><video id="pv" controls playsinline></video></div>
 </div>
 
-<script>
-/* açılış: piksel dinamit (eski oyun tarzı) */
-(function () {
-  var NS = 'http://www.w3.org/2000/svg', svg = document.getElementById('dyn');
-  function px(g, x, y, c, cls) { var r = document.createElementNS(NS, 'rect'); r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', 1); r.setAttribute('height', 1); r.setAttribute('fill', c); if (cls) r.setAttribute('class', cls); g.appendChild(r); return r; }
-  var st = svg.querySelector('.stick'), x, y;
-  for (y = 7; y < 16; y++) for (x = 5; x < 11; x++) {
-    var c = x === 5 ? '#9D0208' : x === 10 ? '#B5172A' : '#E63946';
-    if (y === 9 || y === 13) c = (x === 5 || x === 10) ? '#C9B48E' : '#F1E3C4';
-    px(st, x, y, c);
-  }
-  for (x = 6; x < 10; x++) px(st, x, 6, '#9D0208');
-  [[9, 2], [8, 3], [8, 4], [8, 5]].forEach(function (p, i) { px(st, p[0], p[1], '#8A6A44', 'fz f' + i); });
-  var sp = document.createElementNS(NS, 'g'); sp.setAttribute('class', 'spark'); st.appendChild(sp);
-  px(sp, 9, 1, '#FFFFFF'); px(sp, 10, 1, '#FFD60A', 'fl'); px(sp, 9, 0, '#FF8C00', 'fl2'); px(sp, 8, 1, '#FFD60A', 'fl2');
-  var seed = 7; function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
-  function burst(g, rin, rout, cols, dens, jag) {
-    for (var y = 0; y < 16; y++) for (var x = 0; x < 16; x++) {
-      var d = Math.hypot(x - 7.5, y - 9.5), rr = rout * (1 + (rnd() * 2 - 1) * jag);
-      if (d >= rin && d <= rr && rnd() < dens) { var t = d / rr; px(g, x, y, t < .4 ? cols[0] : t < .75 ? cols[1] : cols[2]); }
-    }
-  }
-  burst(svg.querySelector('.b1'), 0, 2.6, ['#FFFFFF', '#FFD60A', '#FF8C00'], 1, .15);
-  burst(svg.querySelector('.b2'), 0, 5.2, ['#FFFFFF', '#FFD60A', '#FF5400'], .95, .25);
-  burst(svg.querySelector('.b3'), 3.5, 7.5, ['#FF8C00', '#8D8D8D', '#5A5A5A'], .35, .2);
-})();
-</script>
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
 /* ====================================================================
@@ -275,7 +215,7 @@ function fit(it) {
   if (bw / bh > r) { f.style.width = bw + 'px'; f.style.height = Math.ceil(bw / r) + 'px'; }
   else { f.style.height = bh + 'px'; f.style.width = Math.ceil(bh * r) + 'px'; }
 }
-function fitAll() { if (window.items) items.forEach(fit); if (window.knock) fit(knock); }
+function fitAll() { if (window.items) items.forEach(fit); }
 addEventListener('resize', fitAll);
 
 function startInline(it) {
@@ -358,79 +298,6 @@ function applyFilter(f) {
 applyFilter('all');
 fitAll();
 
-/* açılış: videolar MERT AKAY'ın etrafında durur; kaydırma başlayınca düz şekilde ortaya toplanır */
-var HERO_SPOTS = innerWidth < 768
-  ? [[-21, -32], [21, -26], [-22, -15], [22, -12], [-21, 14], [22, 17], [-21, 29], [21, 33]]
-  : [[-31, -27], [0, -31], [31, -26], [-36, 1], [36, 3], [-27, 28], [3, 31], [31, 27]];
-if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-var heroTiles = [];
-var stage = document.getElementById('stage');
-VIDEOS.slice(0, HERO_SPOTS.length).forEach(function (v, i) {
-  var sp = HERO_SPOTS[i];
-  var t = document.createElement('div');
-  t.className = 'tile';
-  var img = document.createElement('img'); img.alt = ''; t.appendChild(img);
-  if (v.thumb) img.src = v.thumb;
-  if (v.vimeo) vimeoThumb(v.vimeo.split('/')[0], img, 640, v);
-  var h = { el: t, v: v, gx: sp[0], gy: sp[1], rot: (i % 2 ? 1 : -1) * (120 + i * 25) };
-  t.style.zIndex = 20 + i;
-  t.style.transform = pos(h.gx, h.gy, .7, 0);
-  t.onclick = function () { openPlayer(v); };
-  stage.appendChild(t);
-  heroTiles.push(h);
-});
-function pos(x, y, sc, rot) { return 'translate(-50%,-50%) translate(' + x + 'vw,' + y + 'vh) rotate(' + rot + 'deg) scale(' + sc + ')'; }
-/* harflerin içindeki video */
-var knockEl = document.getElementById('knock'), wordline = document.querySelector('.wordline');
-var knock = { v: VIDEOS[0], media: knockEl, frame: null };
-function startKnock() {
-  if (knock.frame || !knock.v || !knock.v.vimeo) return;
-  var parts = knock.v.vimeo.split('/');
-  var f = document.createElement('iframe');
-  f.allow = 'autoplay; fullscreen'; f.setAttribute('tabindex', '-1');
-  f.src = 'https://player.vimeo.com/video/' + parts[0] + '?background=1&autoplay=1&muted=1&loop=1&autopause=0&dnt=1&quality=720p' + (parts[1] ? '&h=' + parts[1] : '');
-  knockEl.insertBefore(f, knockEl.firstChild); knock.frame = f; fit(knock);
-}
-function stopKnock() { if (knock.frame) { knock.frame.remove(); knock.frame = null; } }
-addEventListener('resize', function () { fit(knock); });
-/* siteye girince kareler yerlerine yumuşakça gelir */
-var heroReady = false;
-function gather() {
-  startKnock();
-  heroTiles.forEach(function (h, i) {
-    setTimeout(function () { h.el.style.opacity = 1; h.el.style.transform = pos(h.gx, h.gy, 1, 0); }, 80 * i);
-  });
-  setTimeout(function () { heroReady = true; heroTiles.forEach(function (h) { h.el.style.transition = 'none'; }); heroScroll(); }, 80 * heroTiles.length + 900);
-}
-var heroEl = document.getElementById('hero'), heroLive = true, merged = false;
-function clamp01(x) { return Math.min(1, Math.max(0, x)); }
-function ease(x) { return x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
-function heroScroll() {
-  if (!heroReady) return;
-  var r = heroEl.getBoundingClientRect(), p = clamp01(-r.top / (r.height - innerHeight));
-  /* 1) kareler ortaya toplanır */
-  var g = ease(clamp01(p / .5));
-  heroTiles.forEach(function (h) {
-    h.el.style.transform = pos(h.gx * (1 - g), h.gy * (1 - g), 1 - g * .92, 0);
-    h.el.style.opacity = 1 - clamp01((g - .85) / .15);
-    h.el.style.pointerEvents = g > .05 ? 'none' : 'auto';
-  });
-  /* 2) toplandıkları an harflerin içi videoyla dolar */
-  var m = clamp01((p - .45) / .12);
-  knockEl.style.opacity = m;
-  var nowMerged = m > .5;
-  if (nowMerged !== merged) { merged = nowMerged; wordline.classList.toggle('outline', merged); }
-  /* 3) en sonda yazı yukarı kayıp kaybolur */
-  var o = clamp01((p - .8) / .2);
-  var tf = 'translateY(' + (-o * 20) + 'vh)';
-  knockEl.style.transform = tf; wordline.style.transform = tf;
-  wordline.style.opacity = 1 - o; if (o > 0) knockEl.style.opacity = m * (1 - o);
-  var live = p < .99;
-  if (live !== heroLive) { heroLive = live; if (live) startKnock(); else stopKnock(); }
-}
-var heroTick = false;
-addEventListener('scroll', function () { if (!heroTick) { heroTick = true; requestAnimationFrame(function () { heroScroll(); heroTick = false; }); } }, { passive: true });
-
 /* menü */
 var info = document.getElementById('info');
 function setInfo(open) { info.classList.toggle('open', open); info.setAttribute('aria-hidden', !open); }
@@ -511,7 +378,7 @@ setLang(saved);
 
 /* açılış */
 document.getElementById('yil').textContent = new Date().getFullYear();
-setTimeout(function () { document.getElementById('loader').classList.add('done'); document.body.classList.add('ready'); gather(); }, 1600);
+document.body.classList.add('ready');
 </script>
 </body>
 </html>

@@ -107,7 +107,7 @@
 </header>
 
 <main>
-  <div class="filters" id="filters"></div>
+  <div class="filters"><span>Projeler</span></div>
   <div class="grid" id="grid"></div>
   <div class="foot"><span>© <span id="yil"></span> Mert Akay</span><a href="#" data-act="top">Başa dön</a></div>
 </main>
@@ -195,19 +195,8 @@ var items = VIDEOS.map(function (v, i) {
   return { el: a, v: v };
 });
 
-/* filtreler (boş kategoriler gösterilmez) */
-var filtersEl = document.getElementById('filters');
-var current = 'secili';
-FILTERS.forEach(function (f) {
-  if (f.id !== 'all' && !VIDEOS.some(function (v) { return inFilter(v, f.id); })) return;
-  var b = document.createElement('button');
-  b.textContent = f.label; b.dataset.f = f.id;
-  b.onclick = function () { applyFilter(f.id); };
-  filtersEl.appendChild(b);
-});
+/* projeler (hepsi gösterilir) */
 function applyFilter(f) {
-  current = f;
-  filtersEl.querySelectorAll('button').forEach(function (b) { b.classList.toggle('active', b.dataset.f === f); });
   var n = 0;
   items.forEach(function (it) {
     var show = inFilter(it.v, f);
@@ -221,7 +210,7 @@ function applyFilter(f) {
     }
   });
 }
-applyFilter('secili');
+applyFilter('all');
 
 /* menü */
 var info = document.getElementById('info');
